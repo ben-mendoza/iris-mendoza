@@ -14,48 +14,63 @@
 
 import streamlit as st
 from streamlit.logger import get_logger
+import numpy as np
+import joblib
 
 LOGGER = get_logger(__name__)
 
+# class Model:
+#   def __init__(self):
+#      pass
+     
+#   def predict(self, instances):
+#     predictions = []
+#     for i in instances:
+#        predictions.append(0)
+
+#     return np.array(predictions)
+
+
+def classify(instances):
+   model = Model()
+   classes = model.predict(instances)
+   return classes
+
 
 def run():
-    st.set_page_config(
-        page_title="Hello",
-        page_icon="👋",
-    )
+    # st.set_page_config(
+    #     page_title="Hello",
+    #     page_icon="👋",
+    # )
 
-    st.write("# :balloon: Welcome to My App! 👋")
+    # load Model
+    model = joblib.load("svc_model.pkl")
 
-    st.sidebar.info("Select a demo above.")
+    st.write("# Welcome to the Iris Classifier")
+
+    # st.sidebar.info("Select a demo above.")
 
     st.markdown(
         """
-        Streamlit is an open-source app framework built specifically for
-        Machine Learning and Data Science projects.
-        **👈 Select a demo from the sidebar** to see some examples
-        of what Streamlit can do!
-        ## Want to learn more?
-        - Check out [streamlit.io](https://streamlit.io)
-        - Jump into our [documentation](https://docs.streamlit.io)
-        - Ask a question in our [community
-          forums](https://discuss.streamlit.io)
-        ## See more complex demos
-        - Use a neural net to [analyze the Udacity Self-driving Car Image
-          Dataset](https://github.com/streamlit/demo-self-driving)
-        - Explore a [New York City rideshare dataset](https://github.com/streamlit/demo-uber-nyc-pickups)
+        This app classifies Iris flowers into four classes: claseses here.
+
+        Input the values for each feature to classify your flower.
     """
     )
 
-    st.markdown(
-        """
-          ## Now some widgets now
-        """)
+    sepal_length = st.text_input(label='sepal_length')
+    sepal_width = st.text_input(label='sepal_width')
+    petal_length = st.text_input(label='petal_length')
+    petal_width = st.text_input(label='petal_width')
 
-    models = st.multiselect(
-            "ML Models", ["KNN", "SVM", "Bayes", "Tree"], ["KNN", "Tree"]
-        )
-    
-    st.markdown(f"This are the selected items: {models}")
+    if st.button('Submit'):
+      st.write(f'The values you submitted are: ', sepal_length, sepal_width, petal_length, petal_width)
+      user_iris = np.array([[sepal_length, sepal_width, petal_length, petal_width]])
+      results = model.predict(user_iris)
+      iris_classes = ['Iris-Setosa', 'Iris-Versicolor', 'Iris-Virginica']
+      for i in results:
+         st.write(f'Your iris is of type: {iris_classes[i]}')
+
 
 if __name__ == "__main__":
     run()
